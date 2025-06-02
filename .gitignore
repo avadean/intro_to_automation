@@ -207,3 +207,6 @@ cython_debug/
 
 # Log files created by default by the nohup command
 nohup.out
+
+# Out stuff
+miller.png
