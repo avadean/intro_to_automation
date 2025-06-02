@@ -23,9 +23,9 @@ def test_save_output(tmp_path):
     run_miller = subprocess.run(
         ["miller", "--output", filename], text=True, cwd=tmp_path
     )
-    assert (
-        run_miller.returncode == 0
-    ), f"Couldn't run `miller --output test.nc`: {run_miller.stderr}"
+    assert run_miller.returncode == 0, (
+        f"Couldn't run `miller --output test.nc`: {run_miller.stderr}"
+    )
 
     output_file = tmp_path / filename
     assert output_file.exists(), f"Output file was not created at {output_file}"

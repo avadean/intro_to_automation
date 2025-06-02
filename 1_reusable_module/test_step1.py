@@ -29,13 +29,13 @@ def test_no_uncommitted_files():
         ["git", "status"], check=True, capture_output=True, text=True
     )
     assert not status.stderr, "'git status' didn't run successfully"
-    assert (
-        "Untracked files" not in status.stdout
-    ), "There are untracked files in the repo"
+    assert "Untracked files" not in status.stdout, (
+        "There are untracked files in the repo"
+    )
     existing_graph = top_level_dir / "miller.png"
-    assert (
-        not existing_graph.exists()
-    ), "'miller.png' is in the working tree, and may be committed in the repo"
+    assert not existing_graph.exists(), (
+        "'miller.png' is in the working tree, and may be committed in the repo"
+    )
 
 
 def test_has_functions():

@@ -21,9 +21,9 @@ def test_project_structure():
 
     wrong_name = package_dir / "miller.py"
     correct_name = package_dir / "__init__.py"
-    assert not (
-        wrong_name.exists()
-    ), f"Python file has wrong name ('{wrong_name}', but should be '{correct_name}')"
+    assert not (wrong_name.exists()), (
+        f"Python file has wrong name ('{wrong_name}', but should be '{correct_name}')"
+    )
     assert correct_name.is_file(), f"Expected '{correct_name}', have you made a tpyo?"
 
 
@@ -54,9 +54,9 @@ def test_install(tmp_path):
     python -c 'import miller'
     """
     status = subprocess.run(command, shell=True, capture_output=True, text=True)
-    assert (
-        status.returncode == 0
-    ), "Couldn't install package, run 'pytest -vvv' for more info"
+    assert status.returncode == 0, (
+        "Couldn't install package, run 'pytest -vvv' for more info"
+    )
 
 
 def test_local_import():
