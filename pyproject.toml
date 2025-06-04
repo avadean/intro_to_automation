@@ -1,0 +1,18 @@
+[project]
+name = "miller"
+dynamic = ["version"]
+dependencies = [
+    "numpy",
+ "matplotlib",
+]
+
+[project.optional-dependencies]
+tests = ["pytest"]
+
+[project.scripts]
+miller = "miller:main"
+
+[build-system]
+requires = ["setuptools_scm[toml] >= 6.2"]
+
+[tool.setuptools_scm]
