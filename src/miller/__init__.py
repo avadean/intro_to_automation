@@ -1,12 +1,9 @@
+import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def flux_surface(R0: float = 2.5,
-                 A:float = 2.2,
-                 kappa: float = 1.5,
-                 delta:float = 0.3,
-                 theta: np.ndarray =np.linspace(0, 2 * np.pi)):
+def flux_surface(R0: float, A: float, kappa: float, delta: float, thetas: np.ndarray):
     """
     Creates a Miller flux surface
 
@@ -20,7 +17,7 @@ def flux_surface(R0: float = 2.5,
         Elongation
     delta : float
         Triangularity
-    theta : 1D np.ndarray
+    thetas : 1D np.ndarray
         Geometric poloidal angles
 
     Returns
@@ -34,14 +31,14 @@ def flux_surface(R0: float = 2.5,
     r = R0 / A
 
     return R0 + r * np.cos(
-        theta + (np.arcsin(delta) * np.sin(theta))
-    ), kappa * r * np.sin(theta)
+        thetas + (np.arcsin(delta) * np.sin(thetas))
+    ), kappa * r * np.sin(thetas)
 
 
 def plot_surface(x: np.ndarray, y: np.ndarray,
-                 xlabel: str ="x", ylabel: str ="y",
-                 figname: str ="miller.png",
-                 savefig: bool =True):
+                 xlabel: str = "x", ylabel: str = "y",
+                 figname: str = "miller.png",
+                 savefig: bool = True):
     """
     Creates a plot of provided data
 
@@ -75,15 +72,37 @@ def area(r, z):
 
 
 def main():
-    deltas = np.linspace(-1.0, 1.0, 1000)
+    parser = argparse.ArgumentParser(
+        prog="Miller",
+        description="Creates a Miller plot"
+    )
 
-    R_s, Z_s = flux_surface()
+    parser.add_argument("-f", "--filename", type=str, default="miller.png", help="filename of png")
+    parser.add_argument("-A", "--A", type=float, default=2.2, help="aspect ratio")
+    parser.add_argument("-k", "--kappa", type=float, default=1.5, help="elongation")
+    parser.add_argument("-d", "--delta", type=float, default=0.3, help="triangularity")
+    parser.add_argument("-R", "--R0", type=float, default=2.5, help="major radius of magnetic axis")
 
-    R_s_vals, Z_s_vals = zip(*[flux_surface(delta=delta) for delta in deltas])
+    args = parser.parse_args()
+
+    thetas = np.linspace(0.0, 2.0 * np.pi)
+    deltas = np.linspace(-1.0, 1.0, 100)
+
+    R_s, Z_s = flux_surface(R0=args.R0,
+                            A=args.A,
+                            kappa=args.kappa,
+                            delta=args.delta,
+                            thetas=thetas)
+
+    R_s_vals, Z_s_vals = zip(*[flux_surface(R0=args.R0,
+                                            A=args.A,
+                                            kappa=args.kappa,
+                                            delta=delta,
+                                            thetas=thetas) for delta in deltas])
 
     areas = area(R_s_vals, Z_s_vals)
 
-    plot_surface(R_s, Z_s)
+    plot_surface(R_s, Z_s, figname=args.filename)
     plot_surface(deltas, areas, figname="deltas.png")
 
 
