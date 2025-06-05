@@ -1,8 +1,10 @@
 import argparse
+import datetime as dt
 import matplotlib.pyplot as plt
 import numpy as np
 import setuptools_scm as stscm
 import tomli
+import xarray as xr
 
 
 def flux_surface(R0: float, A: float, kappa: float, delta: float, thetas: np.ndarray):
@@ -79,14 +81,36 @@ def area(r, z):
     return np.abs(np.trapezoid(z, r))
 
 
+def store_data(R_s: np.ndarray, Z_s: np.ndarray,
+               R0: float, A: float, kappa: float, delta: float,
+               thetas: np.ndarray,
+               filename: str):
+    ds = xr.Dataset(data_vars={
+            "R": (("theta",), R_s),
+            "Z": (("theta",), Z_s),
+        },
+        coords={
+            "theta": thetas,
+        },
+        attrs={
+            "R0": R0,
+            "A": A,
+            "kappa": kappa,
+            "delta": delta,
+            "created": dt.datetime.now().isoformat(),
+            "description": "Flux surface shape in R-Z plane at given poloidal angles"
+        })
+
+    ds.to_netcdf(filename)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="Miller",
         description="Creates a Miller plot"
     )
 
-    parser.add_argument("filein", nargs="?", default=None, help="filename of input")
-    parser.add_argument("-f", "--fileout", type=str, default="miller.png", help="filename of output")
+    parser.add_argument("-o", "--output", type=str, default="output.nc", help="filename of NC output")
     parser.add_argument("-v", "--version", default=False, action="store_true", help="print version")
     parser.add_argument("-A", "--A", type=float, default=2.2, help="aspect ratio")
     parser.add_argument("-k", "--kappa", type=float, default=1.5, help="elongation")
@@ -116,8 +140,13 @@ def main():
 
     areas = area(R_s_vals, Z_s_vals)
 
-    plot_surface(R_s, Z_s, figname=args.fileout)
+    plot_surface(R_s, Z_s, figname="miller.png")
     plot_surface(deltas, areas, figname="deltas.png")
+
+    store_data(R_s=R_s, Z_s=Z_s,
+               R0=args.R0, A=args.A, kappa=args.kappa, delta=args.delta,
+               thetas=thetas,
+               filename=args.output)
 
 
 if __name__ == "__main__":
