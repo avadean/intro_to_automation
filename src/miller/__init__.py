@@ -1,6 +1,8 @@
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+import setuptools_scm as stscm
+import tomli
 
 
 def flux_surface(R0: float, A: float, kappa: float, delta: float, thetas: np.ndarray):
@@ -77,13 +79,19 @@ def main():
         description="Creates a Miller plot"
     )
 
-    parser.add_argument("-f", "--filename", type=str, default="miller.png", help="filename of png")
+    parser.add_argument("filein", nargs="?", default=None, help="filename of input")
+    parser.add_argument("-f", "--fileout", type=str, default="miller.png", help="filename of output")
+    parser.add_argument("-v", "--version", default=False, action="store_true", help="print version")
     parser.add_argument("-A", "--A", type=float, default=2.2, help="aspect ratio")
     parser.add_argument("-k", "--kappa", type=float, default=1.5, help="elongation")
     parser.add_argument("-d", "--delta", type=float, default=0.3, help="triangularity")
     parser.add_argument("-R", "--R0", type=float, default=2.5, help="major radius of magnetic axis")
 
     args = parser.parse_args()
+
+    if args.version:
+        print(f"Version: {stscm.get_version()}")
+        return
 
     thetas = np.linspace(0.0, 2.0 * np.pi)
     deltas = np.linspace(-1.0, 1.0, 100)
@@ -102,7 +110,7 @@ def main():
 
     areas = area(R_s_vals, Z_s_vals)
 
-    plot_surface(R_s, Z_s, figname=args.filename)
+    plot_surface(R_s, Z_s, figname=args.fileout)
     plot_surface(deltas, areas, figname="deltas.png")
 
 
