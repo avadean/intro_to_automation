@@ -1,9 +1,12 @@
 [project]
 name = "miller"
 dynamic = ["version"]
+requires-python = ">=3.11"
 dependencies = [
     "numpy",
- "matplotlib",
+    "matplotlib",
+    "setuptools-scm>=8.3.1",
+    "tomli>=2.2.1",
 ]
 
 [project.optional-dependencies]
