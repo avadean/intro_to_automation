@@ -30,6 +30,12 @@ def flux_surface(R0: float, A: float, kappa: float, delta: float, thetas: np.nda
         Vertical coordinate of the flux surface
     """
 
+    if np.isclose(A, 0.0):
+        raise ValueError('Aspect ratio should not be 0.')
+
+    if abs(delta) > 1.0:
+        raise ValueError('Magnitude of triangularity must not be greater than 1.')
+
     r = R0 / A
 
     return R0 + r * np.cos(
