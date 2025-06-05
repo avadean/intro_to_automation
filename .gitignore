@@ -289,3 +289,4 @@ fabric.properties
 
 # Our stuff
 *.png
+*.nc
